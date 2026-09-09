@@ -39,11 +39,9 @@ publishing {
             }
         }
     }
-    publications {
-        create<MavenPublication>("pluginMaven") {
-            groupId    = "com.codedtx"
-            artifactId = "tv-test-plugin"
-            version    = project.findProperty("VERSION_NAME") as String? ?: "1.0.0"
-        }
+    // Let java-gradle-plugin auto-create pluginMaven (JAR) + the marker artifact
+    // (com.codedtx.tv-test:com.codedtx.tv-test.gradle.plugin) so plugin resolution works.
+    publications.withType<MavenPublication>().configureEach {
+        version = project.findProperty("VERSION_NAME") as String? ?: "1.0.0"
     }
 }
