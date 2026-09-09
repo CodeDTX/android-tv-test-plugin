@@ -27,10 +27,16 @@ jobs:
 name: Screenshots
 
 on:
+  # Runs automatically after UI Tests succeed on the same branch.
+  # Also supports manual trigger for one-off screenshot runs.
+  workflow_run:
+    workflows: ["UI Tests"]
+    types: [completed]
   workflow_dispatch:
 
 jobs:
   screenshots:
+    if: ${'$'}{{ github.event_name == 'workflow_dispatch' || github.event.workflow_run.conclusion == 'success' }}
     uses: codedtx/android-tv-testing/.github/workflows/tv-screenshots.yml@v1
     with:
       module: $module
