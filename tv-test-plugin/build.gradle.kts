@@ -4,6 +4,9 @@ plugins {
     `maven-publish`
 }
 
+group   = "com.codedtx"
+version = findProperty("VERSION_NAME") as String? ?: "1.0.0"
+
 gradlePlugin {
     plugins {
         create("tvTestPlugin") {
@@ -39,9 +42,6 @@ publishing {
             }
         }
     }
-    // Let java-gradle-plugin auto-create pluginMaven (JAR) + the marker artifact
-    // (com.codedtx.tv-test:com.codedtx.tv-test.gradle.plugin) so plugin resolution works.
-    publications.withType<MavenPublication>().configureEach {
-        version = project.findProperty("VERSION_NAME") as String? ?: "1.0.0"
-    }
+    // Repository only — version is set via project.version above so java-gradle-plugin
+    // picks it up for both the JAR publication and the Plugin Marker Artifact.
 }
