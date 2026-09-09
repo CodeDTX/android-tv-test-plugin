@@ -1,0 +1,26 @@
+# Gradle
+.gradle/
+build/
+**/build/
+
+# Local machine config — never commit
+local.properties
+
+# IDE — keep structure, skip caches and generated files
+.idea/caches/
+.idea/libraries/
+.idea/modules/
+.idea/shelf/
+.idea/*.iml
+.idea/workspace.xml
+.idea/navEditor.xml
+.idea/assetWizardSettings.xml
+.idea/AndroidProjectSystem.xml
+.idea/migrations.xml
+.idea/kotlinc.xml
+.idea/compiler.xml
+.idea/runConfigurations.xml
+
+# OS
+.DS_Store
+Thumbs.db
