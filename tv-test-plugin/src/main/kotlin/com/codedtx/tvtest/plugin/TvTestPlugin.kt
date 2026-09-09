@@ -43,11 +43,11 @@ class TvTestPlugin : Plugin<Project> {
                 // 1. .github/workflows/
                 val workflowDir = File(rootDir, ".github/workflows").also { it.mkdirs() }
                 writeIfAbsent(
-                    File(workflowDir, "ui-tests.yml"),
+                    File(workflowDir, "codedtx-ui-tests.yml"),
                     Templates.uiTestsWorkflow(module, primaryFlavor.gradleName, primaryFlavor.appId)
                 )
                 writeIfAbsent(
-                    File(workflowDir, "screenshots.yml"),
+                    File(workflowDir, "codedtx-screenshots.yml"),
                     Templates.screenshotsWorkflow(module, primaryFlavor.gradleName, primaryFlavor.appId)
                 )
 
@@ -73,8 +73,8 @@ class TvTestPlugin : Plugin<Project> {
                 writeIfAbsent(File(testRoot, "test/AppTestConsts.kt"), Templates.testConstantsStub(packageName))
 
                 println("")
-                println("✓  .github/workflows/ui-tests.yml")
-                println("✓  .github/workflows/screenshots.yml")
+                println("✓  .github/workflows/codedtx-ui-tests.yml")
+                println("✓  .github/workflows/codedtx-screenshots.yml")
                 println("✓  androidTest/UiTest.kt")
                 println("✓  androidTest/ScreenshotTest.kt")
                 println("✓  androidTest/test/AppScreen.kt")
