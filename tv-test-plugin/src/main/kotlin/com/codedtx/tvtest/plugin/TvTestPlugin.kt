@@ -34,7 +34,7 @@ class TvTestPlugin : Plugin<Project> {
                         appId      = baseAppId + (f.applicationIdSuffix ?: ".${f.name.lowercase()}")
                     )
                 }.ifEmpty {
-                    listOf(Flavor("Debug", baseAppId))
+                    listOf(Flavor("", baseAppId))
                 }
 
                 val primaryFlavor = flavors.first()

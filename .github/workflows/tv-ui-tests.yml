@@ -8,8 +8,9 @@ on:
         required: true
         type: string
       flavor:
-        description: Flavor name capitalised for Gradle tasks, e.g. Production or Staging
-        required: true
+        description: Flavor name capitalised for Gradle tasks, e.g. Production or Staging. Leave empty for no-flavor projects.
+        required: false
+        default: ""
         type: string
       app-id:
         description: Full applicationId including flavor suffix, e.g. com.mycompany.myapp.production
