@@ -135,12 +135,114 @@ CODEDTX_GITHUB_TOKEN=ghp_xxxxxxxxxxxxxxxxxxxx   # read:packages scope only
 ./gradlew :app:tvTestSetup
 ```
 
-This generates all androidTest stubs and CI workflows automatically.
+This generates all androidTest stubs, CI workflows, and drops the `/setup-tv-testing` skill into
+`.claude/commands/` automatically.
 
-### 4e. Fill in LOAD_SIGNAL_TEXT
+### 4e. Analyze the project's screens and navigation
 
-Edit `AppTestConsts.kt` — replace the TODO with the exact text visible in the app when the main
-screen finishes loading data.
+Before writing any test code, read the following to understand what the app actually does:
+
+```
+app/src/main/java/              — all Composable screens, ViewModels, navigation graphs
+app/src/main/res/               — layouts if Leanback/Views
+AndroidManifest.xml             — confirmed Activity name
+```
+
+Extract:
+- Screen names and their entry-point composables
+- Navigation flow: what screen appears on launch, what D-pad actions lead where
+- Loading/progress indicators: any `CircularProgressIndicator`, `LinearProgressIndicator`,
+  shimmer, or visibility-toggled loading states
+- `testTag()` modifiers already present on composables
+- Any `LaunchedEffect`, `collectAsState`, or data-loading patterns that mean the UI
+  is async (must be waited for before asserting or capturing)
+
+Print a one-paragraph summary of what you found. Do NOT write any test code yet.
+
+### 4f. Fill in LOAD_SIGNAL_TEXT and AppTestTags
+
+Ask the user:
+> "What text is visible in your app when the main screen has fully loaded its data?
+>  (This is what `waitUntilLoaded()` polls for — it can be a title, a tab label, or
+>  any string that only appears once the first data fetch is complete.)"
+
+Wait for the answer. Then:
+- Write `LOAD_SIGNAL_TEXT` in `AppTestConsts.kt`
+- If `testTag()` modifiers were found in step 4e, populate `AppTestTags.kt` with them.
+  If none exist yet, add a comment listing the composables that need tags added.
+
+### 4g. Write `UiTest.kt` — real test methods based on project understanding
+
+Replace the `// TODO: write your @Test methods below` comment with actual tests inferred
+from the screen analysis in 4e. Follow this pattern for every test:
+
+```kotlin
+@Test
+fun testInitialScreenLoads() {
+    screen.waitUntilLoaded()
+    screen.assertLoadSignalVisible()
+}
+
+@Test
+fun testNavigateToNextScreen() {
+    screen.waitUntilLoaded()
+    nav.down()          // move focus to first item
+    nav.ok()            // select it
+    // assert expected state on the next screen
+    screen.assertTextVisible("Expected title")
+}
+```
+
+Rules for writing UiTest:
+- Every test starts with `screen.waitUntilLoaded()` — no exceptions.
+- Use `screen.waitForTagOrSkip("tag")` for elements that only appear in some flavors.
+- Use `assert.waitForVisible("tag")` before asserting anything that loads async.
+- Never hardcode sleep/delay — use wait helpers only.
+- Write one test per user flow, not one test per assertion.
+- If a loading spinner is present, call `assert.waitForVisible` on the content behind it
+  rather than asserting on the spinner itself.
+
+### 4h. Write initial screenshot — always first
+
+Always write this as the first test in `ScreenshotTest.kt`:
+
+```kotlin
+@Test
+fun screenshot_01_initialScreen() {
+    screen.waitUntilLoaded()
+    capture.capture("01_initial_screen.png")
+}
+```
+
+This establishes the baseline. Do NOT write any further screenshot tests yet.
+
+### 4i. Ask the user for additional screenshot scenarios
+
+After writing the initial screenshot test, ask:
+
+> "The initial screen screenshot is set up. What other screenshot scenarios do you need?
+>  For example:
+>  - After navigating to a specific section (e.g. 'after opening the Sports tab')
+>  - A focused/selected state (e.g. 'a content card focused')
+>  - An error or empty state
+>  - A player or detail screen
+>
+>  Describe each scenario in plain English and I'll write the test."
+
+Wait for the user's response. Then for each scenario described, write a `@Test` method
+following these rules:
+
+Rules for screenshot tests:
+- File names must be zero-padded and descriptive: `02_sports_tab.png`, `03_card_focused.png`
+- Every test starts with `screen.waitUntilLoaded()`.
+- Navigation must use `nav.down()`, `nav.right()`, `nav.ok()`, `nav.back()` — never
+  click by coordinate.
+- If navigating to a new screen, call `assert.waitForVisible("tag")` or
+  `assert.waitForText("text")` on content in that screen before capturing.
+- If a progress bar or loading spinner is present after navigation, call
+  `assert.waitForVisible("content_tag")` to wait for it to disappear before `capture.capture()`.
+- Never capture while a loading indicator might still be on screen.
+- Call `capture.capture("filename.png")` as the LAST line of each test.
 
 ---
 
@@ -183,11 +285,10 @@ Changes applied:
   ✓ Infrastructure: AppScreen.kt, AppTestTags.kt, AppTestConsts.kt
 
 Developer work remaining:
-  1. Set LOAD_SIGNAL_TEXT in AppTestConsts.kt
-  2. Add testTag() modifiers to your composables and register them in AppTestTags.kt
-  3. Write @Test methods in UiTest.kt
-  4. Write screenshot scenarios in ScreenshotTest.kt
-  5. Push to trigger ui-tests.yml CI workflow
+  1. Add testTag() modifiers to composables listed in AppTestTags.kt (if any were missing)
+  2. Review and extend @Test methods in UiTest.kt as the app grows
+  3. Run /setup-tv-testing again any time to add more screenshot scenarios
+  4. Push to trigger codedtx-ui-tests.yml CI workflow
 ```
 
 ---
@@ -201,3 +302,8 @@ Developer work remaining:
 - If the project already has androidTest infrastructure, integrate — do not duplicate.
 - If detection is ambiguous (multiple app modules, complex flavor matrix), ask the user before
   proceeding to Phase 3.
+- Never write a screenshot test without first calling `screen.waitUntilLoaded()`.
+- Never capture a screenshot while a loading indicator may still be visible — always wait for content.
+- Never write screenshot scenarios without asking the user first (except the mandatory initial screen).
+- Never use hardcoded sleeps or `Thread.sleep()` in any test — use wait helpers only.
+- Screenshot filenames must be zero-padded and descriptive (`01_`, `02_`, etc.).
