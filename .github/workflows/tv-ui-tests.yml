@@ -86,9 +86,7 @@ jobs:
             adb shell settings put global transition_animation_scale 0
             adb shell settings put global animator_duration_scale 0
             adb shell pm clear ${{ inputs.app-id }} || true
-            ./gradlew :${{ inputs.module }}:connected${{ inputs.flavor }}DebugAndroidTest \
-              -Pandroid.testInstrumentationRunnerArguments.class=${{ inputs.app-id }}.UiTest \
-              -Pandroid.testInstrumentationRunnerArguments.clearPackageData=true
+            ./gradlew :${{ inputs.module }}:connected${{ inputs.flavor }}DebugAndroidTest -Pandroid.testInstrumentationRunnerArguments.class=${{ inputs.app-id }}.UiTest -Pandroid.testInstrumentationRunnerArguments.clearPackageData=true
 
       - name: Upload UI test results
         if: always()
