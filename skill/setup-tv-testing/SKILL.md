@@ -68,9 +68,9 @@ Files to CREATE:
   ✦ ~/.gradle/gradle.properties    — CODEDTX_GITHUB_TOKEN (developer only, not committed)
 
 Files to GENERATE (via :tvTestSetup Gradle task):
-  ✦ .github/workflows/codedtx-ui-tests.yml     — triggers on push; named "UI Tests"
-  ✦ .github/workflows/codedtx-screenshots.yml  — triggers automatically after "UI Tests" succeeds;
-                                                   also supports manual workflow_dispatch
+  ✦ .github/workflows/codedtx-ui-tests.yml     — triggers on push; runs UI tests then screenshots
+                                                   in sequence (screenshots job has needs: [ui-tests])
+  ✦ .github/workflows/codedtx-screenshots.yml  — manual-only (workflow_dispatch) for on-demand runs
   ✦ app/src/androidTest/.../UiTest.kt
   ✦ app/src/androidTest/.../ScreenshotTest.kt
   ✦ app/src/androidTest/.../test/AppScreen.kt
@@ -288,8 +288,8 @@ Android TV testing configured successfully.
 Changes applied:
   ✓ Plugin repository added to settings.gradle.kts
   ✓ Plugin applied in app/build.gradle.kts
-  ✓ CI workflow: .github/workflows/codedtx-ui-tests.yml     (push-triggered, named "UI Tests")
-  ✓ CI workflow: .github/workflows/codedtx-screenshots.yml  (auto-runs after UI Tests succeed)
+  ✓ CI workflow: .github/workflows/codedtx-ui-tests.yml     (push-triggered; screenshots chain automatically via needs: [ui-tests])
+  ✓ CI workflow: .github/workflows/codedtx-screenshots.yml  (manual workflow_dispatch only)
   ✓ Test stubs: UiTest.kt, ScreenshotTest.kt
   ✓ Infrastructure: AppScreen.kt, AppTestTags.kt, AppTestConsts.kt
 

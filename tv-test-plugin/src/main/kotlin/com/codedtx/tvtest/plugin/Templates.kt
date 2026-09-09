@@ -21,22 +21,25 @@ jobs:
       app-id: $appId
     secrets:
       CODEDTX_GITHUB_TOKEN: ${'$'}{{ secrets.CODEDTX_GITHUB_TOKEN }}
+
+  screenshots:
+    needs: [ui-tests]
+    uses: codedtx/android-tv-testing/.github/workflows/tv-screenshots.yml@v1
+    with:
+      module: $module
+      flavor: $flavorGradle
+      app-id: $appId
+    secrets: inherit
 """.trimIndent()
 
     fun screenshotsWorkflow(module: String, flavorGradle: String, appId: String) = """
 name: Screenshots
 
 on:
-  # Runs automatically after UI Tests succeed on the same branch.
-  # Also supports manual trigger for one-off screenshot runs.
-  workflow_run:
-    workflows: ["UI Tests"]
-    types: [completed]
   workflow_dispatch:
 
 jobs:
   screenshots:
-    if: ${'$'}{{ github.event_name == 'workflow_dispatch' || github.event.workflow_run.conclusion == 'success' }}
     uses: codedtx/android-tv-testing/.github/workflows/tv-screenshots.yml@v1
     with:
       module: $module
