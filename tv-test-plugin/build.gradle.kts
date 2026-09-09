@@ -19,6 +19,15 @@ dependencies {
     compileOnly("com.android.tools.build:gradle:8.7.3")
 }
 
+// Inject VERSION_NAME into the bundled version.properties so BuildConfig reads the real version.
+tasks.named<ProcessResources>("processResources") {
+    val pluginVersion = project.findProperty("VERSION_NAME") as String? ?: "1.0.0"
+    inputs.property("pluginVersion", pluginVersion)
+    filesMatching("version.properties") {
+        filter { line -> line.replace("@version@", pluginVersion) }
+    }
+}
+
 publishing {
     repositories {
         maven {

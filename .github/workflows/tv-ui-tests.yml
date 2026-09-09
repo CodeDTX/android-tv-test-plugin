@@ -75,7 +75,8 @@ jobs:
         with:
           api-level: ${{ inputs.api-level }}
           arch: x86_64
-          target: aosp_atd
+          target: google_apis
+          profile: tv_1080p
           avd-name: tv_ui_test_avd
           emulator-options: -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none
           disable-animations: true

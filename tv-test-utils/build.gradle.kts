@@ -18,6 +18,7 @@ android {
 }
 
 dependencies {
+    implementation(platform("androidx.compose:compose-bom:2024.06.00"))
     implementation("androidx.compose.ui:ui-test-junit4")
     implementation("androidx.test.uiautomator:uiautomator:2.2.0")
     implementation("androidx.test.ext:junit:1.1.5")
