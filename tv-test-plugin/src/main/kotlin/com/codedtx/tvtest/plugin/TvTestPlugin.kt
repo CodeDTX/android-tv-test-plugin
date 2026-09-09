@@ -51,7 +51,16 @@ class TvTestPlugin : Plugin<Project> {
                     Templates.screenshotsWorkflow(module, primaryFlavor.gradleName, primaryFlavor.appId)
                 )
 
-                // 2. androidTest stubs
+                // 2. Claude Code skill — written once so /setup-tv-testing is available in the consumer project
+                val skillContent = TvTestPlugin::class.java.classLoader
+                    ?.getResourceAsStream("commands/setup-tv-testing.md")
+                    ?.use { it.readBytes().toString(Charsets.UTF_8) }
+                if (skillContent != null) {
+                    val claudeCommandsDir = File(rootDir, ".claude/commands").also { it.mkdirs() }
+                    writeIfAbsent(File(claudeCommandsDir, "setup-tv-testing.md"), skillContent)
+                }
+
+                // 3. androidTest stubs
                 val testRoot = File(
                     project.projectDir,
                     "src/androidTest/java/${packageName.replace('.', '/')}"
@@ -72,11 +81,11 @@ class TvTestPlugin : Plugin<Project> {
                 println("✓  androidTest/test/AppTestTags.kt")
                 println("✓  androidTest/test/AppTestConsts.kt")
                 println("")
+                println("✓  .claude/commands/setup-tv-testing.md")
+                println("")
                 println("Next:")
-                println("  1. Replace TODO_YourActivity in UiTest.kt and ScreenshotTest.kt")
-                println("  2. Set LOAD_SIGNAL_TEXT in AppTestConsts.kt")
-                println("  3. Add your test tags to AppTestTags.kt")
-                println("  4. Write @Test methods in UiTest.kt and ScreenshotTest.kt")
+                println("  Open this project in Claude Code and run /setup-tv-testing")
+                println("  It will detect your Activity, fill placeholders, and validate the setup.")
                 println("")
             }
         }
