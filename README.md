@@ -88,11 +88,14 @@ This creates:
 - `app/src/androidTest/.../test/AppTestTags.kt`
 - `app/src/androidTest/.../test/AppTestConsts.kt`
 
-### 4. Add the CI secret to your repo
+### 4. Add the CI secret to your repo (required)
+
+The generated workflows use `secrets.CODEDTX_GITHUB_TOKEN` to authenticate with GitHub Packages.
+`GITHUB_TOKEN` is scoped to your repo only and cannot read packages from another repository.
 
 In your TV app repo: **Settings → Secrets and variables → Actions → New secret**
 - Name: `CODEDTX_GITHUB_TOKEN`
-- Value: a GitHub PAT with `read:packages` scope
+- Value: a GitHub PAT with `read:packages` scope (same token you use locally)
 
 ---
 

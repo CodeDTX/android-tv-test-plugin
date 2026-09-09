@@ -120,7 +120,7 @@ id("com.codedtx.tv-test") version "1.0.0"
 If a `tvTest {}` DSL block is needed (non-default variant, emulator config), add it. Use only the
 detected values — never add config that matches the default.
 
-### 4c. Document local credentials (never commit)
+### 4c. Document local credentials and CI secret (never commit)
 
 Remind the user to add to `~/.gradle/gradle.properties` (global, never in the project):
 
@@ -128,6 +128,14 @@ Remind the user to add to `~/.gradle/gradle.properties` (global, never in the pr
 CODEDTX_GITHUB_USER=their-github-username
 CODEDTX_GITHUB_TOKEN=ghp_xxxxxxxxxxxxxxxxxxxx   # read:packages scope only
 ```
+
+Also remind the user to add a **repo secret** in GitHub:
+> Settings → Secrets and variables → Actions → New secret
+> Name: `CODEDTX_GITHUB_TOKEN`
+> Value: same PAT with `read:packages` scope
+
+This is required — `GITHUB_TOKEN` is scoped to the consumer repo and cannot read
+packages from `codedtx/android-tv-testing`.
 
 ### 4d. Run `:tvTestSetup`
 

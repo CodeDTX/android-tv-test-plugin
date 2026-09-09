@@ -20,7 +20,7 @@ jobs:
       flavor: $flavorGradle
       app-id: $appId
     secrets:
-      CODEDTX_GITHUB_TOKEN: ${'$'}{{ secrets.GITHUB_TOKEN }}
+      CODEDTX_GITHUB_TOKEN: ${'$'}{{ secrets.CODEDTX_GITHUB_TOKEN }}
 """.trimIndent()
 
     fun screenshotsWorkflow(module: String, flavorGradle: String, appId: String) = """
@@ -37,7 +37,7 @@ jobs:
       flavor: $flavorGradle
       app-id: $appId
     secrets:
-      CODEDTX_GITHUB_TOKEN: ${'$'}{{ secrets.GITHUB_TOKEN }}
+      CODEDTX_GITHUB_TOKEN: ${'$'}{{ secrets.CODEDTX_GITHUB_TOKEN }}
 """.trimIndent()
 
     // ── androidTest Stubs ─────────────────────────────────────────────────────
