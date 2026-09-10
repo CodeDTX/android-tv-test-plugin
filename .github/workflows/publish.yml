@@ -8,7 +8,7 @@ jobs:
   publish:
     runs-on: ubuntu-latest
     permissions:
-      contents: read
+      contents: write
       packages: write
     steps:
       - uses: actions/checkout@v4
@@ -25,3 +25,10 @@ jobs:
         env:
           GPR_USER: ${{ github.actor }}
           GPR_KEY:  ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Move v1 floating tag to latest release
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git tag -f v1
+          git push origin v1 --force
