@@ -21,6 +21,11 @@ on:
         required: false
         type: number
         default: 34
+      runner:
+        description: Runner label to use, e.g. ubuntu-latest or self-hosted
+        required: false
+        default: "ubuntu-latest"
+        type: string
     secrets:
       CODEDTX_GITHUB_TOKEN:
         required: true
@@ -28,7 +33,7 @@ on:
 jobs:
   ui-tests:
     name: Run UI Tests
-    runs-on: ubuntu-latest
+    runs-on: ${{ inputs.runner }}
     timeout-minutes: 60
     env:
       CODEDTX_GITHUB_USER: codedtx-ci

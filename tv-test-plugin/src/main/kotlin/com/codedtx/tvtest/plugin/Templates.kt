@@ -4,7 +4,7 @@ object Templates {
 
     // ── CI Workflows ──────────────────────────────────────────────────────────
 
-    fun uiTestsWorkflow(module: String, flavorGradle: String, appId: String) = """
+    fun uiTestsWorkflow(module: String, flavorGradle: String, appId: String, runner: String = "") = """
 name: UI Tests
 
 on:
@@ -18,7 +18,7 @@ jobs:
     with:
       module: $module
       flavor: $flavorGradle
-      app-id: $appId
+      app-id: $appId${if (runner.isNotBlank()) "\n      runner: $runner" else ""}
     secrets:
       CODEDTX_GITHUB_TOKEN: ${'$'}{{ secrets.CODEDTX_GITHUB_TOKEN }}
 
@@ -28,11 +28,11 @@ jobs:
     with:
       module: $module
       flavor: $flavorGradle
-      app-id: $appId
+      app-id: $appId${if (runner.isNotBlank()) "\n      runner: $runner" else ""}
     secrets: inherit
 """.trimIndent()
 
-    fun screenshotsWorkflow(module: String, flavorGradle: String, appId: String) = """
+    fun screenshotsWorkflow(module: String, flavorGradle: String, appId: String, runner: String = "") = """
 name: Screenshots
 
 on:
@@ -44,7 +44,7 @@ jobs:
     with:
       module: $module
       flavor: $flavorGradle
-      app-id: $appId
+      app-id: $appId${if (runner.isNotBlank()) "\n      runner: $runner" else ""}
     secrets:
       CODEDTX_GITHUB_TOKEN: ${'$'}{{ secrets.CODEDTX_GITHUB_TOKEN }}
 """.trimIndent()
