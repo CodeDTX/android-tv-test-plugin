@@ -103,6 +103,18 @@ jobs:
           path: tv_screenshots/
           if-no-files-found: warn
 
+      - name: Collect logcat on failure
+        if: failure()
+        run: timeout 10 adb logcat -d > /tmp/logcat-screenshots.txt || true
+
+      - name: Upload logcat on failure
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: logcat-screenshots
+          path: /tmp/logcat-screenshots.txt
+          if-no-files-found: ignore
+
       - name: Upload screenshot test results
         if: always()
         uses: actions/upload-artifact@v4
