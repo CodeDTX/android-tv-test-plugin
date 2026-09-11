@@ -128,3 +128,14 @@ git push origin 1.0.18
 ```
 
 The `publish.yml` workflow runs automatically, verifies the JitPack build command succeeds, then moves the `v1` tag to the new release. JitPack serves the artifact on first consumer request.
+
+---
+
+## License
+
+[MIT](LICENSE), the same licence as [runpermit](https://github.com/CodeDTX/runpermit).
+
+Worth stating plainly, because until now there was none: without a licence file
+the default is exclusive copyright, so nobody could legally use this even
+though the repository is public and the instructions above tell you to depend
+on it through JitPack.
