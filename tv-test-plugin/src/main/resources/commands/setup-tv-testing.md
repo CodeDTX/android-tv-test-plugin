@@ -22,7 +22,8 @@ Extract:
 - Android application module name(s)
 - AGP version, Gradle version, Kotlin version
 - Compose BOM version (if present)
-- `applicationId`
+- `applicationId` (base, from `defaultConfig`)
+- `applicationIdSuffix` on the `debug` build type (e.g. `.debug`) — note this separately; the CI workflow receives the base applicationId and discovers the debug package automatically at runtime
 - Product flavors and build types → all build variants
 - Launcher Activity class name (from `AndroidManifest.xml` — look for MAIN + LAUNCHER/LEANBACK_LAUNCHER intent filter)
 - UI technology: Jetpack Compose (`buildFeatures.compose = true`), Leanback, or classic Views
@@ -42,6 +43,7 @@ Android TV Test Setup — Project Analysis
 ─────────────────────────────────────────
 Application module   : :app
 Application ID       : com.example.tv
+Debug App ID         : com.example.tv.debug   (if applicationIdSuffix = ".debug" on debug buildType)
 UI technology        : Jetpack Compose
 Launcher Activity    : MainActivity
 Primary variant      : productionDebug
@@ -51,6 +53,10 @@ Existing screenshots : Yes / No
 Existing CI          : Yes / No
 ─────────────────────────────────────────
 ```
+
+> **Note on `applicationIdSuffix`:** Pass the base `applicationId` (e.g. `com.example.tv`) as `app-id` to the
+> CI workflow — NOT the debug package. The reusable workflow discovers the installed debug instrumentation
+> package automatically at runtime using `adb shell pm list instrumentation`.
 
 Ask the user to confirm or correct the report before proceeding to Phase 3.
 Do NOT proceed without confirmation.
@@ -316,3 +322,4 @@ Developer work remaining:
 - Never write screenshot scenarios without asking the user first (except the mandatory initial screen).
 - Never use hardcoded sleeps or `Thread.sleep()` in any test — use wait helpers only.
 - Screenshot filenames must be zero-padded and descriptive (`01_`, `02_`, etc.).
+- Never pass a build-type-suffixed applicationId (e.g. `com.example.tv.debug`) as `app-id` — always use the base applicationId from `defaultConfig`. The CI workflow discovers the debug instrumentation package automatically.

@@ -13,7 +13,7 @@ on:
         default: ""
         type: string
       app-id:
-        description: Full applicationId including flavor suffix, e.g. com.mycompany.myapp.production
+        description: Base applicationId from defaultConfig (flavor suffix included if applicable, build-type suffix e.g. .debug excluded — Gradle handles this automatically)
         required: true
         type: string
       api-level:
@@ -80,10 +80,10 @@ jobs:
         uses: reactivecircus/android-emulator-runner@v2
         with:
           api-level: ${{ inputs.api-level }}
-          arch: x86_64
-          target: google_apis
+          arch: x86
+          target: android-tv
           profile: tv_1080p
-          avd-name: tv_ui_test_avd
+          avd-name: tv_ui_test_avd_atv
           emulator-options: -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none
           disable-animations: true
           script: |
