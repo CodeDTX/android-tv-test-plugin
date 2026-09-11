@@ -1,4 +1,4 @@
-# android-tv-testing
+# android-tv-test-plugin
 
 Reusable Android TV UI testing platform by [CodeDTX](https://github.com/CodeDTX).
 
@@ -11,65 +11,40 @@ Provides:
 
 ## Prerequisites
 
-This library is hosted on GitHub Packages and requires authentication to download.
-
-### 1. Generate a GitHub PAT
-
-Go to [github.com/settings/tokens](https://github.com/settings/tokens) → New token → select `read:packages` scope → copy the token.
-
-### 2. Add credentials to your global Gradle properties
-
-Create or edit `~/.gradle/gradle.properties` (never commit this file):
-
-```properties
-CODEDTX_GITHUB_USER=your-github-username
-CODEDTX_GITHUB_TOKEN=ghp_xxxxxxxxxxxxxxxxxxxx
-```
-
-This is a one-time setup per machine.
+No authentication needed — the library is hosted on [JitPack](https://jitpack.io), a public registry that builds directly from this GitHub repository. No PAT or credentials required.
 
 ---
 
 ## Installing in a consumer project
 
-### 1. Add the plugin repository to `settings.gradle.kts`
+### 1. Add JitPack to `settings.gradle.kts`
 
 ```kotlin
 pluginManagement {
     repositories {
-        maven {
-            url = uri("https://maven.pkg.github.com/codedtx/android-tv-testing")
-            credentials {
-                username = providers.gradleProperty("CODEDTX_GITHUB_USER").orNull ?: System.getenv("CODEDTX_GITHUB_USER")
-                password = providers.gradleProperty("CODEDTX_GITHUB_TOKEN").orNull ?: System.getenv("CODEDTX_GITHUB_TOKEN")
-            }
-        }
-        google()
+        maven { url = uri("https://jitpack.io") }
         gradlePluginPortal()
+        google()
         mavenCentral()
     }
 }
 dependencyResolutionManagement {
     repositories {
-        maven {
-            url = uri("https://maven.pkg.github.com/codedtx/android-tv-testing")
-            credentials {
-                username = providers.gradleProperty("CODEDTX_GITHUB_USER").orNull ?: System.getenv("CODEDTX_GITHUB_USER")
-                password = providers.gradleProperty("CODEDTX_GITHUB_TOKEN").orNull ?: System.getenv("CODEDTX_GITHUB_TOKEN")
-            }
-        }
+        maven { url = uri("https://jitpack.io") }
         google()
         mavenCentral()
     }
 }
 ```
+
+No CI secret is needed — JitPack is a public registry and Gradle resolves it without credentials.
 
 ### 2. Apply the plugin in your app module's `build.gradle.kts`
 
 ```kotlin
 plugins {
     // ... your existing plugins
-    id("com.codedtx.tv-test") version "1.0.2"
+    id("com.codedtx.tv-test") version "1.0.0"
 }
 ```
 
@@ -80,22 +55,13 @@ plugins {
 ```
 
 This creates:
-- `.github/workflows/ui-tests.yml`
-- `.github/workflows/screenshots.yml`
+- `.github/workflows/codedtx-ui-tests.yml`
+- `.github/workflows/codedtx-screenshots.yml`
 - `app/src/androidTest/.../UiTest.kt`
 - `app/src/androidTest/.../ScreenshotTest.kt`
 - `app/src/androidTest/.../test/AppScreen.kt`
 - `app/src/androidTest/.../test/AppTestTags.kt`
 - `app/src/androidTest/.../test/AppTestConsts.kt`
-
-### 4. Add the CI secret to your repo (required)
-
-The generated workflows use `secrets.CODEDTX_GITHUB_TOKEN` to authenticate with GitHub Packages.
-`GITHUB_TOKEN` is scoped to your repo only and cannot read packages from another repository.
-
-In your TV app repo: **Settings → Secrets and variables → Actions → New secret**
-- Name: `CODEDTX_GITHUB_TOKEN`
-- Value: a GitHub PAT with `read:packages` scope (same token you use locally)
 
 ---
 
@@ -103,15 +69,17 @@ In your TV app repo: **Settings → Secrets and variables → Actions → New se
 
 Open `AppTestConsts.kt` and set `LOAD_SIGNAL_TEXT` to the text visible in your app when the main screen finishes loading. Then write your `@Test` methods in `UiTest.kt`.
 
+Push to your repo — the generated CI workflows trigger automatically. Screenshots run after UI tests pass.
+
 ---
 
 ## Publishing a new version
 
-Tag a release to publish both artifacts to GitHub Packages:
+Tag a release to verify the build and update the `v1` floating tag:
 
 ```bash
-git tag 1.0.3
-git push origin 1.0.3
+git tag 1.0.0
+git push origin 1.0.0
 ```
 
-The `publish.yml` workflow runs automatically on any version tag.
+The `publish.yml` workflow runs automatically, verifies the JitPack build command succeeds, then moves the `v1` tag to the new release. JitPack serves the artifact on first consumer request.

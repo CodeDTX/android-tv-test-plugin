@@ -70,8 +70,7 @@ Determine the exact changes required. List them explicitly:
 ```
 Files to CREATE:
   ✦ app/build.gradle.kts           — add plugin id("com.codedtx.tv-test")
-  ✦ settings.gradle.kts            — add plugin repository (GitHub Packages)
-  ✦ ~/.gradle/gradle.properties    — CODEDTX_GITHUB_TOKEN (developer only, not committed)
+  ✦ settings.gradle.kts            — add JitPack plugin repository (no credentials needed)
 
 Files to GENERATE (via :tvTestSetup Gradle task):
   ✦ .github/workflows/codedtx-ui-tests.yml     — triggers on push; runs UI tests then screenshots
@@ -103,15 +102,7 @@ Apply changes in this order:
 Add to `pluginManagement.repositories` and `dependencyResolutionManagement.repositories`:
 
 ```kotlin
-maven {
-    url = uri("https://maven.pkg.github.com/codedtx/android-tv-testing")
-    credentials {
-        username = providers.gradleProperty("CODEDTX_GITHUB_USER").orNull
-            ?: System.getenv("CODEDTX_GITHUB_USER")
-        password = providers.gradleProperty("CODEDTX_GITHUB_TOKEN").orNull
-            ?: System.getenv("CODEDTX_GITHUB_TOKEN")
-    }
-}
+maven { url = uri("https://jitpack.io") }
 ```
 
 Only add — do not remove or reorder existing repositories.
@@ -127,24 +118,7 @@ id("com.codedtx.tv-test") version "1.0.0"
 If a `tvTest {}` DSL block is needed (non-default variant, emulator config), add it. Use only the
 detected values — never add config that matches the default.
 
-### 4c. Document local credentials and CI secret (never commit)
-
-Remind the user to add to `~/.gradle/gradle.properties` (global, never in the project):
-
-```properties
-CODEDTX_GITHUB_USER=their-github-username
-CODEDTX_GITHUB_TOKEN=ghp_xxxxxxxxxxxxxxxxxxxx   # read:packages scope only
-```
-
-Also remind the user to add a **repo secret** in GitHub:
-> Settings → Secrets and variables → Actions → New secret
-> Name: `CODEDTX_GITHUB_TOKEN`
-> Value: same PAT with `read:packages` scope
-
-This is required — `GITHUB_TOKEN` is scoped to the consumer repo and cannot read
-packages from `codedtx/android-tv-testing`.
-
-### 4d. Run `:tvTestSetup`
+### 4c. Run `:tvTestSetup`
 
 ```bash
 ./gradlew :app:tvTestSetup
@@ -153,7 +127,7 @@ packages from `codedtx/android-tv-testing`.
 This generates all androidTest stubs, CI workflows, and drops the `/setup-tv-testing` skill into
 `.claude/commands/` automatically.
 
-### 4e. Analyze the project's screens and navigation
+### 4d. Analyze the project's screens and navigation
 
 Before writing any test code, read the following to understand what the app actually does:
 
@@ -174,7 +148,7 @@ Extract:
 
 Print a one-paragraph summary of what you found. Do NOT write any test code yet.
 
-### 4f. Fill in LOAD_SIGNAL_TEXT and AppTestTags
+### 4e. Fill in LOAD_SIGNAL_TEXT and AppTestTags
 
 Ask the user:
 > "What text is visible in your app when the main screen has fully loaded its data?
@@ -186,10 +160,10 @@ Wait for the answer. Then:
 - If `testTag()` modifiers were found in step 4e, populate `AppTestTags.kt` with them.
   If none exist yet, add a comment listing the composables that need tags added.
 
-### 4g. Write `UiTest.kt` — real test methods based on project understanding
+### 4f. Write `UiTest.kt` — real test methods based on project understanding
 
 Replace the `// TODO: write your @Test methods below` comment with actual tests inferred
-from the screen analysis in 4e. Follow this pattern for every test:
+from the screen analysis in 4d. Follow this pattern for every test:
 
 ```kotlin
 @Test
@@ -231,7 +205,7 @@ fun screenshot_01_initialScreen() {
 
 This establishes the baseline. Do NOT write any further screenshot tests yet.
 
-### 4i. Ask the user for additional screenshot scenarios
+### 4h. Ask the user for additional screenshot scenarios
 
 After writing the initial screenshot test, ask:
 

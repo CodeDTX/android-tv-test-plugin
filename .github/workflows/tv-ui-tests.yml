@@ -26,18 +26,12 @@ on:
         required: false
         default: "ubuntu-latest"
         type: string
-    secrets:
-      CODEDTX_GITHUB_TOKEN:
-        required: true
 
 jobs:
   ui-tests:
     name: Run UI Tests
     runs-on: ${{ inputs.runner }}
     timeout-minutes: 60
-    env:
-      CODEDTX_GITHUB_USER: codedtx-ci
-      CODEDTX_GITHUB_TOKEN: ${{ secrets.CODEDTX_GITHUB_TOKEN }}
 
     steps:
       - name: Checkout

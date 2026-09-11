@@ -1,0 +1,6 @@
+jdk:
+  - openjdk17
+before_install:
+  - yes | sdkmanager --licenses
+install:
+  - ./gradlew :tv-test-utils:publishToMavenLocal :tv-test-plugin:publishToMavenLocal -PVERSION_NAME=$VERSION

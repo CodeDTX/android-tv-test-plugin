@@ -14,22 +14,19 @@ on:
 
 jobs:
   ui-tests:
-    uses: codedtx/android-tv-testing/.github/workflows/tv-ui-tests.yml@v1
+    uses: codedtx/android-tv-test-plugin/.github/workflows/tv-ui-tests.yml@v1
     with:
       module: $module
       flavor: $flavorGradle
       app-id: $appId${if (runner.isNotBlank()) "\n      runner: $runner" else ""}
-    secrets:
-      CODEDTX_GITHUB_TOKEN: ${'$'}{{ secrets.CODEDTX_GITHUB_TOKEN }}
 
   screenshots:
     needs: [ui-tests]
-    uses: codedtx/android-tv-testing/.github/workflows/tv-screenshots.yml@v1
+    uses: codedtx/android-tv-test-plugin/.github/workflows/tv-screenshots.yml@v1
     with:
       module: $module
       flavor: $flavorGradle
       app-id: $appId${if (runner.isNotBlank()) "\n      runner: $runner" else ""}
-    secrets: inherit
 """.trimIndent()
 
     fun screenshotsWorkflow(module: String, flavorGradle: String, appId: String, runner: String = "") = """
@@ -40,13 +37,11 @@ on:
 
 jobs:
   screenshots:
-    uses: codedtx/android-tv-testing/.github/workflows/tv-screenshots.yml@v1
+    uses: codedtx/android-tv-test-plugin/.github/workflows/tv-screenshots.yml@v1
     with:
       module: $module
       flavor: $flavorGradle
       app-id: $appId${if (runner.isNotBlank()) "\n      runner: $runner" else ""}
-    secrets:
-      CODEDTX_GITHUB_TOKEN: ${'$'}{{ secrets.CODEDTX_GITHUB_TOKEN }}
 """.trimIndent()
 
     // ── androidTest Stubs ─────────────────────────────────────────────────────
