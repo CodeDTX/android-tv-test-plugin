@@ -51,7 +51,7 @@ No CI secret is needed — JitPack is a public registry and Gradle resolves it w
 ```kotlin
 plugins {
     // ... your existing plugins
-    id("com.codedtx.tv-test") version "1.0.0"
+    id("com.codedtx.tv-test") version "1.0.17"
 }
 ```
 
@@ -123,8 +123,8 @@ Push to your repo — the generated CI workflows trigger automatically. Screensh
 Tag a release to verify the build and update the `v1` floating tag:
 
 ```bash
-git tag 1.0.0
-git push origin 1.0.0
+git tag 1.0.18
+git push origin 1.0.18
 ```
 
 The `publish.yml` workflow runs automatically, verifies the JitPack build command succeeds, then moves the `v1` tag to the new release. JitPack serves the artifact on first consumer request.
