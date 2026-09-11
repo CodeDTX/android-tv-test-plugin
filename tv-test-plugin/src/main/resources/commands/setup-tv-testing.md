@@ -105,6 +105,18 @@ Add to `pluginManagement.repositories` and `dependencyResolutionManagement.repos
 maven { url = uri("https://jitpack.io") }
 ```
 
+Also add a `resolutionStrategy` block inside `pluginManagement` so Gradle can locate the plugin via JitPack:
+
+```kotlin
+resolutionStrategy {
+    eachPlugin {
+        if (requested.id.id == "com.codedtx.tv-test") {
+            useModule("com.github.CodeDTX.android-tv-test-plugin:tv-test-plugin:${requested.version}")
+        }
+    }
+}
+```
+
 Only add — do not remove or reorder existing repositories.
 
 ### 4b. Apply plugin in app module `build.gradle.kts`

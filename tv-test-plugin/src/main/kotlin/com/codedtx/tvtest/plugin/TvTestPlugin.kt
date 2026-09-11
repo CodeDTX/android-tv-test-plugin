@@ -12,7 +12,7 @@ class TvTestPlugin : Plugin<Project> {
         // Auto-add tv-test-utils — consumer never writes this manually
         project.dependencies.add(
             "androidTestImplementation",
-            "com.codedtx:tv-test-utils:${BuildConfig.LIBRARY_VERSION}"
+            "com.github.CodeDTX.android-tv-test-plugin:tv-test-utils:${BuildConfig.LIBRARY_VERSION}"
         )
 
         project.tasks.register("tvTestSetup") {

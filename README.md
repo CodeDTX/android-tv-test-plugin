@@ -27,6 +27,13 @@ pluginManagement {
         google()
         mavenCentral()
     }
+    resolutionStrategy {
+        eachPlugin {
+            if (requested.id.id == "com.codedtx.tv-test") {
+                useModule("com.github.CodeDTX.android-tv-test-plugin:tv-test-plugin:${requested.version}")
+            }
+        }
+    }
 }
 dependencyResolutionManagement {
     repositories {
@@ -65,9 +72,47 @@ This creates:
 
 ---
 
-## After setup
+## After setup — use Claude Code to finish the configuration
 
-Open `AppTestConsts.kt` and set `LOAD_SIGNAL_TEXT` to the text visible in your app when the main screen finishes loading. Then write your `@Test` methods in `UiTest.kt`.
+`tvTestSetup` generates stub files with `TODO` placeholders. Instead of filling them manually, open the project in [Claude Code](https://claude.com/claude-code) and run:
+
+```
+/setup-tv-testing
+```
+
+This is a Claude Code skill that was dropped into `.claude/commands/setup-tv-testing.md` by the Gradle task. When you run it, Claude:
+
+1. **Reads your project** — scans `AndroidManifest.xml`, your Composable screens, ViewModels, navigation graphs, and existing CI workflows to understand your app
+2. **Prints a project report** — confirms your application ID, launcher Activity, UI technology, flavors, and existing test infrastructure. You verify before anything is written.
+3. **Fills all placeholders automatically** — sets `LOAD_SIGNAL_TEXT` in `AppTestConsts.kt` to the actual text visible when your screen finishes loading, populates `AppTestTags.kt` with `testTag()` values found in your composables
+4. **Writes real test methods** — generates `@Test` methods in `UiTest.kt` based on your actual screens and D-pad navigation flows, not generic stubs
+5. **Writes the initial screenshot test** — sets up `ScreenshotTest.kt` with your first capture scenario, then asks you what additional screenshots you need
+6. **Validates the setup** — runs `./gradlew dependencies` and `compileDebugAndroidTestKotlin` to confirm everything resolves and compiles
+
+### Requirements
+
+- [Claude Code](https://claude.com/claude-code) installed (`npm install -g @anthropic-ai/claude-code`)
+- Run from the root of your consumer project
+
+### Example session
+
+```
+> /setup-tv-testing
+
+Android TV Test Setup — Project Analysis
+─────────────────────────────────────────
+Application module   : :app
+Application ID       : com.example.mytv
+UI technology        : Jetpack Compose
+Launcher Activity    : MainActivity
+Primary variant      : productionDebug
+─────────────────────────────────────────
+Confirm? (yes to proceed)
+```
+
+Claude then writes tests specific to your app — not copy-paste stubs.
+
+---
 
 Push to your repo — the generated CI workflows trigger automatically. Screenshots run after UI tests pass.
 
